@@ -1,19 +1,17 @@
 
-name: Driveclub Windows Build
+name: Driveclub Windows Auto Release
 
 on:
   workflow_dispatch:
   push:
-    branches: [main]
-    paths:
-      - "windows/**"
-      - ".github/workflows/windows-build.yml"
+    branches:
+      - main
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  build:
+  build-and-release:
     runs-on: windows-latest
 
     defaults:
@@ -29,29 +27,52 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install build dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install pillow pyinstaller capstone pytest
 
       - name: Run launcher tests
         working-directory: windows/launcher
-        run: python -m pytest tests
+        run: python -m pytest
 
-      - name: Build Windows FSR edition
+      - name: Build FSR edition
         working-directory: windows/launcher
         run: bash build.sh fsr
 
-      - name: Build Windows non-FSR edition
+      - name: Build non-FSR edition
         working-directory: windows/launcher
         run: bash build.sh nofsr
 
-      - name: Upload Windows builds
+      - name: Prepare release files
+        run: |
+          mkdir -p release
+          cp windows/launcher/dist/fsr/DriveClub.exe release/DriveClub-FSR.exe
+          cp windows/launcher/dist/nofsr/DriveClub.exe release/DriveClub-NoFSR.exe
+
+      - name: Upload workflow artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Driveclub-Windows-Launchers
-          path: |
-            windows/launcher/dist/fsr/DriveClub.exe
-            windows/launcher/dist/nofsr/DriveClub.exe
-          if-no-files-found: error
+          name: Driveclub-Windows-Builds
+          path: release/*.exe
           retention-days: 14
+
+      - name: Publish automatic rolling release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: auto-latest
+          name: Driveclub Windows — Latest Build
+          body: |
+            Automatically generated Windows launcher builds.
+
+            - DriveClub-FSR.exe: FSR edition
+            - DriveClub-NoFSR.exe: Non-FSR edition
+
+            Source commit: ${{ github.sha }}
+
+            This release is automatically updated after each successful
+            build on the main branch.
+          prerelease: true
+          make_latest: false
+          overwrite_files: true
+          files: release/*.exe
