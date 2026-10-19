@@ -1,30 +1,49 @@
 # Driveclub Native
 
 [![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/@blacklineinteractive)
+[![Windows Auto Build](https://github.com/fzfalcon/Driveclub-Port/actions/workflows/windows-build.yml/badge.svg?branch=main)](https://github.com/fzfalcon/Driveclub-Port/actions/workflows/windows-build.yml)
+[![Latest Windows Build](https://img.shields.io/badge/Windows-Latest%20Build-blue?style=for-the-badge&logo=windows)](https://github.com/fzfalcon/Driveclub-Port/releases/tag/auto-latest)
 
 ![LOGO](media/logo.png)
+
 ![Driveclub In-Game](media/2026-10-14_22-34-39.png)
 
 A native port of **Driveclub** (PS4, CUSA00003) to **macOS** and **Windows**.
 
-| Platform | Game version | Renderer | Where | Maintainer |
-| --- | --- | --- | --- | --- |
-| macOS (Intel) | v1.05 | Metal 3 | this repository's `src/` | [BlackLineInteractive](https://github.com/BlackLineInteractive) |
-| Windows 10/11 | v1.28 | Vulkan (shadPS4's renderer), FSR 3.1 / FSR 4 / FSR 4.1.1, frame generation | [`windows/`](windows/README.md) — ready-to-play builds on the [Windows releases](https://github.com/qnfn/Driveclub-Port/releases) | [qnfn](https://github.com/qnfn) |
+## Windows Downloads
 
-**Windows highlight:** DCport 0.3.0 can build AMD's **FSR 4.1.1** for Vulkan from your own DirectX 12 DLL, on your PC, in one click (about two minutes), and run it with FSR 3 frame generation. See [`windows/README.md`](windows/README.md#-new-in-030-fsr-411-built-on-your-own-pc-in-one-click).
+Download the latest automatically published Windows launcher builds from GitHub Releases.
 
-The sections below describe the macOS backend; the Windows backend (DCport) runs on a native PS4 runtime based on [Supermedo/bloodborne_pc](https://github.com/Supermedo/bloodborne_pc) and is documented in [`windows/README.md`](windows/README.md).
+| Edition | Download |
+|---|---|
+| Windows — FSR | [DriveClub-FSR.exe](https://github.com/fzfalcon/Driveclub-Port/releases/download/auto-latest/DriveClub-FSR.exe) |
+| Windows — No FSR | [DriveClub-NoFSR.exe](https://github.com/fzfalcon/Driveclub-Port/releases/download/auto-latest/DriveClub-NoFSR.exe) |
+| All Windows builds | [Latest automatic release](https://github.com/fzfalcon/Driveclub-Port/releases/tag/auto-latest) |
 
-**Windows (DCport):**
+**Automatic Windows builds:** GitHub Actions builds the launcher editions after pushes to `main` and updates the rolling `auto-latest` pre-release after a successful build.
+
+> **Important:** These downloads are launcher executables, not a complete playable game package. You must provide your own legally acquired game files and configure the required runtime separately. Download links work after the automatic release workflow has uploaded the renamed executables.
+
+## Platform Overview
+
+| Platform | Game version | Renderer | Location | Maintainer |
+|---|---|---|---|---|
+| macOS (Intel) | v1.05 | Metal 3 | This repository's `src/` | [BlackLineInteractive](https://github.com/BlackLineInteractive) |
+| Windows 10/11 | v1.28 | Vulkan (shadPS4's renderer), FSR 3.1 / FSR 4 / FSR 4.1.1, frame generation | [`windows/`](windows/README.md) | [qnfn](https://github.com/qnfn) |
+
+**Windows highlight:** DCport 0.3.0 supports building AMD's **FSR 4.1.1** for Vulkan using your own DirectX 12 DLL on your PC. See the [Windows documentation](windows/README.md#-new-in-030-fsr-411-built-on-your-own-pc-in-one-click).
+
+The sections below describe the macOS backend. The Windows backend (DCport) uses a native PS4 runtime based on [Supermedo/bloodborne_pc](https://github.com/Supermedo/bloodborne_pc), documented in [`windows/README.md`](windows/README.md).
+
+### Windows — DCport
 
 ![DCport launcher on Windows](windows/media/launcher.png)
+
 ![DRIVECLUB BIKES on Windows, FSR 4](windows/media/ingame-bike.png)
+
 ![Event preview on Windows, FSR 4](windows/media/ingame-track.png)
 
-This is not a general-purpose emulator. PS4 code is x86-64, so on Intel Macs it executes directly without CPU recompilation. We only replace what is console-specific: Sony system libraries (HLE) and the AMD Liverpool GPU (GCN) - with a custom Metal renderer tailored specifically for this single game.
-
-## Repository layout
+## Repository Layout
 
 | Path | Backend | Platform | What it is |
 | --- | --- | --- | --- |
@@ -81,6 +100,18 @@ cmake --build build
 ```
 
 **Windows**: download a release build, or build the launcher and runtime from [`windows/`](windows/README.md).
+
+## Automatic Windows Releases
+
+The workflow is located at `.github/workflows/windows-build.yml`.
+
+- Runs on pushes to `main` and manual workflow dispatch.
+- Runs launcher tests before building.
+- Builds the FSR and non-FSR launcher editions.
+- Uploads the executables as workflow artifacts.
+- Updates the rolling `auto-latest` GitHub pre-release after a successful build.
+
+See [Windows build workflow](https://github.com/fzfalcon/Driveclub-Port/actions/workflows/windows-build.yml).
 
 ## Game Files
 
